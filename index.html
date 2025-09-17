@@ -127,7 +127,7 @@
             .sidebar {
                 width: 340px;
                 max-width: 100%;
-                background: var(--bg); /* dark background */
+                background: var(--bg);
                 border-right: 1px solid var(--border);
                 overflow-y: auto;
                 flex-shrink: 0;
@@ -164,7 +164,7 @@
             /* ---------- MAIN ---------- */
             .main {
                 flex: 1;
-                background: var(--bg); /* dark background */
+                background: var(--bg);
                 overflow: auto;
                 display: flex;
                 flex-direction: column;
@@ -261,13 +261,14 @@
 
             /* ---------- CARD (shared) ---------- */
             .post-card {
-                background: var(--surface); /* greyish card background */
+                background: var(--surface);
                 border-left: 4px solid var(--accent);
                 border-radius: 8px;
                 padding: 0.8rem;
-                display: flex; /* left side content + right side bookmark */
+                display: flex;
                 align-items: flex-start;
                 gap: 0.8rem;
+                min-height: 80px; /* increased height */
                 transition: background 0.2s;
             }
             .post-card:hover {
@@ -421,7 +422,7 @@
                         <option value="oldest">Oldest</option>
                     </select>
 
-                    <button id="refreshBtn" disabled>Refresh</button>
+                    <button id="loadBtn" disabled>Load</button>
                 </section>
 
                 <hr />
@@ -557,7 +558,7 @@
 
             /* ====================== UI REFS ====================== */
             const topicSelect = document.getElementById("topicSelect");
-            const refreshBtn = document.getElementById("refreshBtn");
+            const loadBtn = document.getElementById("loadBtn");
             const statusEl = document.getElementById("status");
             const postsEl = document.getElementById("posts");
             const searchInput = document.getElementById("searchInput");
@@ -606,12 +607,12 @@
                 const cached = localStorage.getItem(cacheKey);
                 if (cached && !forceRefresh) {
                     renderPosts(JSON.parse(cached));
-                    refreshBtn.disabled = false;
+                    loadBtn.disabled = false;
                     return;
                 }
 
                 showStatus(true);
-                refreshBtn.disabled = true;
+                loadBtn.disabled = true;
                 try {
                     const subs = TOPIC_MAP[topic];
                     const all = [];
@@ -644,7 +645,7 @@
                     postsEl.innerHTML = `<p style="color:#ff6666;">${e.message}</p>`;
                 } finally {
                     showStatus(false);
-                    refreshBtn.disabled = false;
+                    loadBtn.disabled = false;
                 }
             }
 
@@ -783,7 +784,8 @@
                     const delBtn = document.createElement("button");
                     delBtn.className = "saveBtn";
                     delBtn.title = "Remove";
-                    delBtn.textContent = "✕";
+                    delBtn.innerHTML =
+                        '<i class="fa-solid fa-trash"></i>'; /* same dimensions */
                     delBtn.addEventListener("click", () => toggleBookmark(p));
                     card.append(delBtn);
 
@@ -797,10 +799,10 @@
                 const t = topicSelect.value;
                 if (t) {
                     loadTopic(t);
-                    refreshBtn.disabled = false;
+                    loadBtn.disabled = false;
                 }
             });
-            refreshBtn.addEventListener("click", () =>
+            loadBtn.addEventListener("click", () =>
                 loadTopic(topicSelect.value, true)
             );
             searchInput.addEventListener("input", applyFiltersAndSort);
