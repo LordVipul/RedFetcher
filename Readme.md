@@ -1,6 +1,6 @@
 # RedFetcher – Yesterday’s Top Reddit Posts
 
-**A lightweight, web app that shows the best Reddit posts from yesterday for a chosen topic.**
+**A lightweight web app that shows the best Reddit posts from yesterday for a chosen topic.**
 
 ## Features
 
