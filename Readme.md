@@ -15,6 +15,8 @@
 Open `index.html` in a browser, pick a topic, and explore yesterday’s top posts.  
 Saved posts stay in your browser between sessions.
 
+![alt text](image.png)
+
 ---
 
 _Made with some help from GPT OSS_
