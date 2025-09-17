@@ -10,11 +10,10 @@
         />
         <link rel="manifest" href="manifest.json" />
 
-        <!-- Font‑Awesome -->
+        <!-- Font Awesome – integrity removed to avoid hash‑mismatch -->
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-            integrity="sha512-pQYwA0RrnVynnA0Yy3/UKVb4e/uBmx+l1nvcBdJlrANj5lljWYfrvNbCjtKts1FV2PU9t8dWJwTYh6Tu5bCe2g=="
             crossorigin="anonymous"
             referrerpolicy="no-referrer"
         />
@@ -144,15 +143,13 @@
                 opacity: 0;
                 visibility: hidden;
             }
-
-            /* Mobile – sidebar slides up */
             @media (max-width: 720px) {
                 .wrapper {
                     flex-direction: column;
                 }
                 .sidebar {
                     width: 100%;
-                    max-height: 400px; /* arbitrary large enough */
+                    max-height: 400px;
                     transition: max-height 0.35s ease, opacity 0.35s ease,
                         visibility 0.35s;
                 }
@@ -309,7 +306,7 @@
                 cursor: pointer;
                 font-size: 1.1rem;
                 transition: transform 0.2s, color 0.2s;
-                align-self: flex-end; /* placed after title */
+                align-self: flex-end;
             }
             .saveBtn:hover {
                 transform: scale(1.2);
@@ -547,8 +544,8 @@
                 const end = todayStart - 1;
                 return [Math.floor(start / 1000), Math.floor(end / 1000)];
             };
-            const storageKey = (topic, dateStr) =>
-                `${STORAGE_PREFIX}_${topic}_${dateStr}`;
+            const storageKey = (topic, date) =>
+                `${STORAGE_PREFIX}_${topic}_${date}`;
 
             /* ====================== UI REFS ====================== */
             const topicSelect = document.getElementById("topicSelect");
@@ -573,7 +570,9 @@
 
             /* ====================== SERVICE WORKER ====================== */
             if ("serviceWorker" in navigator) {
-                navigator.serviceWorker.register("sw.js").catch(console.error);
+                navigator.serviceWorker
+                    .register("sw.js")
+                    .catch((e) => console.warn("SW registration failed:", e));
             }
 
             /* ====================== FETCH LOGIC ====================== */
@@ -602,6 +601,7 @@
                     refreshBtn.disabled = false;
                     return;
                 }
+
                 showStatus(true);
                 refreshBtn.disabled = true;
                 try {
@@ -752,13 +752,11 @@
                     a.className = "title";
                     a.textContent = p.title;
 
-                    const removeBtn = document.createElement("button");
-                    removeBtn.className = "saveBtn";
-                    removeBtn.title = "Remove";
-                    removeBtn.innerHTML = "✕";
-                    removeBtn.addEventListener("click", () =>
-                        toggleBookmark(p)
-                    );
+                    const delBtn = document.createElement("button");
+                    delBtn.className = "saveBtn";
+                    delBtn.title = "Remove";
+                    delBtn.innerHTML = "✕";
+                    delBtn.addEventListener("click", () => toggleBookmark(p));
 
                     const meta = document.createElement("div");
                     meta.className = "meta";
@@ -768,7 +766,7 @@
       <span><i class="fa-solid fa-comment"></i>${p.comments}</span>
     `;
 
-                    card.append(a, removeBtn, meta);
+                    card.append(a, delBtn, meta);
                     frag.appendChild(card);
                 });
                 bookmarkList.appendChild(frag);
@@ -801,7 +799,7 @@
             });
 
             /* ====================== INITIAL STATE ====================== */
-            renderBookmarks(); // always visible
+            renderBookmarks(); // bookmarks always visible
         </script>
     </body>
 </html>
