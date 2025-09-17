@@ -25,8 +25,8 @@
 
         <style>
             :root {
-                --bg: #000000;
-                --surface: #111111;
+                --bg: #000000; /* absolute black */
+                --surface: #111111; /* darker grey for cards */
                 --border: #2a2a2a;
                 --accent: #b43131; /* updated accent */
                 --text-primary: #e0e0e0;
@@ -127,24 +127,22 @@
             .sidebar {
                 width: 340px;
                 max-width: 100%;
-                background: var(--surface);
+                background: var(--bg); /* dark background */
                 border-right: 1px solid var(--border);
                 overflow-y: auto;
                 flex-shrink: 0;
                 display: flex;
                 flex-direction: column;
-                transition: transform 0.35s ease, opacity 0.35s ease,
+                transition: width 0.35s ease, opacity 0.35s ease,
                     visibility 0.35s;
-                transform: translateX(0);
                 visibility: visible;
                 opacity: 1;
             }
             .sidebar.collapsed {
-                transform: translateX(-100%);
+                width: 0;
                 visibility: hidden;
                 opacity: 0;
             }
-            /* Mobile – slide‑up */
             @media (max-width: 720px) {
                 .wrapper {
                     flex-direction: column;
@@ -154,6 +152,7 @@
                     max-height: 400px;
                     transition: max-height 0.35s ease, opacity 0.35s ease,
                         visibility 0.35s;
+                    margin-bottom: 1rem; /* small gap below sidebar on mobile */
                 }
                 .sidebar.collapsed {
                     max-height: 0;
@@ -165,7 +164,7 @@
             /* ---------- MAIN ---------- */
             .main {
                 flex: 1;
-                background: var(--surface);
+                background: var(--bg); /* dark background */
                 overflow: auto;
                 display: flex;
                 flex-direction: column;
@@ -262,13 +261,13 @@
 
             /* ---------- CARD (shared) ---------- */
             .post-card {
-                background: var(--bg);
+                background: var(--surface); /* greyish card background */
                 border-left: 4px solid var(--accent);
                 border-radius: 8px;
                 padding: 0.8rem;
-                display: flex;
-                flex-direction: column;
-                gap: 0.3rem;
+                display: flex; /* left side content + right side bookmark */
+                align-items: flex-start;
+                gap: 0.8rem;
                 transition: background 0.2s;
             }
             .post-card:hover {
@@ -276,9 +275,9 @@
             }
 
             .main .post-card {
-                width: 100%;
                 max-width: 800px;
                 margin: 0 auto;
+                width: 100%;
             }
             .sidebar-content .post-card {
                 margin: 0 0.5rem;
@@ -287,6 +286,12 @@
             .post-card a.title {
                 font-weight: 500;
                 color: var(--accent);
+            }
+
+            .post-content {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
             }
 
             .meta {
@@ -302,23 +307,21 @@
             }
 
             .saveBtn {
-                background: none;
+                background: #000;
+                color: var(--accent);
                 border: 2px solid var(--accent);
                 border-radius: 8px;
-                color: var(--accent);
+                padding: 0.2rem 0.6rem;
                 cursor: pointer;
                 font-size: 1.1rem;
-                padding: 0.2rem 0.6rem;
-                align-self: flex-end;
-                transition: transform 0.2s, color 0.2s, background 0.2s;
+                transition: background 0.2s, color 0.2s;
             }
             .saveBtn:hover {
                 background: var(--accent);
                 color: #000;
-                transform: scale(1.1);
             }
             .saveBtn:active {
-                transform: scale(0.9);
+                transform: translateY(2px);
             }
 
             /* ---------- BOOKMARKS SECTION ---------- */
@@ -339,7 +342,7 @@
 
             /* ---------- FOOTER ---------- */
             footer {
-                background: var(--surface);
+                background: var(--bg);
                 color: var(--text-secondary);
                 text-align: center;
                 padding: 0.8rem 1rem;
@@ -687,21 +690,15 @@
                     card.className = "post-card";
                     card.setAttribute("role", "listitem");
 
+                    const content = document.createElement("div");
+                    content.className = "post-content";
+
                     const title = document.createElement("a");
                     title.href = p.url;
                     title.target = "_blank";
                     title.rel = "noopener";
                     title.className = "title";
                     title.textContent = p.title;
-
-                    const saveBtn = document.createElement("button");
-                    saveBtn.className = "saveBtn";
-                    saveBtn.title = "Bookmark";
-                    saveBtn.innerHTML = '<i class="fa-solid fa-bookmark"></i>';
-                    saveBtn.addEventListener("click", (e) => {
-                        e.stopPropagation();
-                        toggleBookmark(p);
-                    });
 
                     const meta = document.createElement("div");
                     meta.className = "meta";
@@ -711,7 +708,19 @@
       <span><i class="fa-solid fa-comment"></i>${p.comments}</span>
     `;
 
-                    card.append(title, saveBtn, meta);
+                    content.append(title, meta);
+                    card.append(content);
+
+                    const saveBtn = document.createElement("button");
+                    saveBtn.className = "saveBtn";
+                    saveBtn.title = "Bookmark";
+                    saveBtn.innerHTML = '<i class="fa-solid fa-bookmark"></i>';
+                    saveBtn.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        toggleBookmark(p);
+                    });
+                    card.append(saveBtn);
+
                     frag.appendChild(card);
                 });
                 postsEl.appendChild(frag);
@@ -750,18 +759,15 @@
                     card.className = "post-card";
                     card.setAttribute("role", "listitem");
 
+                    const content = document.createElement("div");
+                    content.className = "post-content";
+
                     const a = document.createElement("a");
                     a.href = p.url;
                     a.target = "_blank";
                     a.rel = "noopener";
                     a.className = "title";
                     a.textContent = p.title;
-
-                    const delBtn = document.createElement("button");
-                    delBtn.className = "saveBtn";
-                    delBtn.title = "Remove";
-                    delBtn.innerHTML = "✕";
-                    delBtn.addEventListener("click", () => toggleBookmark(p));
 
                     const meta = document.createElement("div");
                     meta.className = "meta";
@@ -771,7 +777,16 @@
       <span><i class="fa-solid fa-comment"></i>${p.comments}</span>
     `;
 
-                    card.append(a, delBtn, meta);
+                    content.append(a, meta);
+                    card.append(content);
+
+                    const delBtn = document.createElement("button");
+                    delBtn.className = "saveBtn";
+                    delBtn.title = "Remove";
+                    delBtn.textContent = "✕";
+                    delBtn.addEventListener("click", () => toggleBookmark(p));
+                    card.append(delBtn);
+
                     frag.appendChild(card);
                 });
                 bookmarkList.appendChild(frag);
