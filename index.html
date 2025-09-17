@@ -10,7 +10,7 @@
         />
         <link rel="manifest" href="manifest.json" />
 
-        <!-- Font Awesome – integrity removed to avoid hash‑mismatch -->
+        <!-- Font Awesome (integrity removed) -->
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -24,20 +24,18 @@
         />
 
         <style>
+            /* Global variables */
             :root {
-                --bg: #000000; /* absolute black */
-                --surface: #111111; /* darker grey for cards */
+                --bg: #000000;
+                --surface: #111111;
                 --border: #2a2a2a;
-                --accent: #b43131; /* updated accent */
+                --accent: #b43131;
                 --text-primary: #e0e0e0;
                 --text-secondary: #777777;
                 --link-visited: #ff5e5e;
             }
 
-            /* ---------- GENERAL ---------- */
-            *,
-            *::before,
-            *::after {
+            * {
                 box-sizing: border-box;
             }
             html,
@@ -69,7 +67,7 @@
                 font: inherit;
             }
 
-            /* ---------- HEADER ---------- */
+            /* Header */
             header {
                 background: var(--accent);
                 color: #fff;
@@ -91,7 +89,7 @@
                 height: 36px;
             }
 
-            /* ---------- HAMBURGER ---------- */
+            /* Sidebar toggle button */
             #sidebarToggle {
                 background: var(--bg);
                 color: var(--accent);
@@ -116,14 +114,13 @@
                 transform: rotate(90deg);
             }
 
-            /* ---------- LAYOUT ---------- */
+            /* Layout – wrapper, sidebar, main */
             .wrapper {
                 flex: 1;
                 display: flex;
                 overflow: hidden;
             }
 
-            /* ---------- SIDEBAR ---------- */
             .sidebar {
                 width: 340px;
                 max-width: 100%;
@@ -143,6 +140,11 @@
                 visibility: hidden;
                 opacity: 0;
             }
+            .sidebar.collapsed #bookmarks {
+                visibility: hidden;
+                opacity: 0;
+                transition: visibility 0.35s, opacity 0.35s;
+            }
             @media (max-width: 720px) {
                 .wrapper {
                     flex-direction: column;
@@ -152,7 +154,8 @@
                     max-height: 400px;
                     transition: max-height 0.35s ease, opacity 0.35s ease,
                         visibility 0.35s;
-                    margin-bottom: 1rem; /* small gap below sidebar on mobile */
+                    margin-bottom: 1rem;
+                    border-bottom: 1px solid var(--border); /* slight border on mobile */
                 }
                 .sidebar.collapsed {
                     max-height: 0;
@@ -161,7 +164,6 @@
                 }
             }
 
-            /* ---------- MAIN ---------- */
             .main {
                 flex: 1;
                 background: var(--bg);
@@ -170,7 +172,7 @@
                 flex-direction: column;
             }
 
-            /* ---------- CONTROLS ---------- */
+            /* Controls (filters, sort, load) */
             .controls {
                 padding: 1rem;
                 display: grid;
@@ -194,7 +196,6 @@
             .controls input:hover {
                 background: #1a1a1a;
             }
-
             .controls button,
             #bookmarks button {
                 background: #000;
@@ -219,7 +220,12 @@
                 cursor: not-allowed;
             }
 
-            /* ---------- STATUS ---------- */
+            select option {
+                background: #000;
+                color: var(--accent);
+            }
+
+            /* Status (spinner) */
             #status {
                 display: flex;
                 align-items: center;
@@ -245,7 +251,7 @@
                 }
             }
 
-            /* ---------- POSTS LIST ---------- */
+            /* Posts list */
             #postsHeading {
                 margin: 1rem;
                 font-size: 1.4rem;
@@ -259,22 +265,19 @@
                 gap: 0.6rem;
             }
 
-            /* ---------- CARD (shared) ---------- */
             .post-card {
                 background: var(--surface);
                 border-left: 4px solid var(--accent);
                 border-radius: 8px;
                 padding: 0.8rem;
                 display: flex;
-                align-items: flex-start;
+                align-items: center;
                 gap: 0.8rem;
-                min-height: 80px; /* increased height */
                 transition: background 0.2s;
             }
             .post-card:hover {
                 background: #1a1a1a;
             }
-
             .main .post-card {
                 max-width: 800px;
                 margin: 0 auto;
@@ -283,7 +286,6 @@
             .sidebar-content .post-card {
                 margin: 0 0.5rem;
             }
-
             .post-card a.title {
                 font-weight: 500;
                 color: var(--accent);
@@ -293,6 +295,8 @@
                 display: flex;
                 flex-direction: column;
                 flex: 1;
+                justify-content: space-between;
+                gap: 0.3rem; /* small gap between title and meta */
             }
 
             .meta {
@@ -324,13 +328,34 @@
             .saveBtn:active {
                 transform: translateY(2px);
             }
+            .saveBtn i {
+                font-size: 1rem;
+            } /* same size as other icons */
 
-            /* ---------- BOOKMARKS SECTION ---------- */
+            .delBtn {
+                /* X button in the bookmark list */
+                background: var(--surface);
+                color: var(--text-secondary);
+                border: none;
+                border-radius: 8px;
+                padding: 0.2rem 0.6rem;
+                cursor: pointer;
+                font-size: 1.1rem;
+                transition: background 0.2s, color 0.2s;
+            }
+            .delBtn:hover {
+                background: var(--border);
+            }
+            .delBtn:active {
+                transform: translateY(2px);
+            }
+
             #bookmarks {
                 padding: 0 1rem 1rem;
+                transition: visibility 0.35s, opacity 0.35s;
             }
             #bookmarks h2 {
-                margin: 0 0 0.5rem 0.5rem;
+                margin: 0.5rem 0.5rem;
                 font-size: 1.2rem;
                 color: var(--accent);
                 display: flex;
@@ -341,7 +366,6 @@
                 margin-left: auto;
             }
 
-            /* ---------- FOOTER ---------- */
             footer {
                 background: var(--bg);
                 color: var(--text-secondary);
@@ -351,7 +375,6 @@
                 border-top: 1px solid var(--border);
             }
 
-            /* ---------- RESPONSIVE ---------- */
             @media (max-width: 720px) {
                 .main .post-card {
                     max-width: 100%;
@@ -363,8 +386,6 @@
                     display: none;
                 }
             }
-
-            /* ---------- HR ABOVE BOOKMARKS ---------- */
             .sidebar hr {
                 width: 90%;
                 margin: 1rem auto;
@@ -373,6 +394,7 @@
             }
         </style>
     </head>
+
     <body>
         <header>
             <h1 aria-label="RedFetcher">
@@ -399,7 +421,7 @@
         </header>
 
         <div class="wrapper">
-            <!-- ==================== SIDEBAR ==================== -->
+            <!-- Sidebar -->
             <aside class="sidebar" id="sidebar">
                 <section class="controls" aria-label="Controls">
                     <select id="topicSelect" aria-label="Select topic">
@@ -435,14 +457,14 @@
                     <h2>
                         Saved Posts
                         <button id="clearBookmarksBtn" title="Clear bookmarks">
-                            <i class="fa-solid fa-trash"></i>
+                            Clear
                         </button>
                     </h2>
                     <div id="bookmarkList" role="list"></div>
                 </section>
             </aside>
 
-            <!-- ==================== MAIN ==================== -->
+            <!-- Main content -->
             <main class="main main-content" aria-label="Content">
                 <h2 id="postsHeading">Yesterday’s Top Posts</h2>
 
@@ -473,7 +495,7 @@
         </div>
 
         <script>
-            /* ====================== CONFIG ====================== */
+            /* Config & constants */
             const TOPIC_MAP = {
                 "Web Design": [
                     "webdev",
@@ -541,7 +563,7 @@
             const MAX_PER_SUB = 25;
             const STORAGE_PREFIX = "redfetcher";
 
-            /* ====================== HELPERS ====================== */
+            /* Helper: get yesterday’s UTC timestamps */
             const getYesterdayUTC = () => {
                 const now = new Date();
                 const todayStart = Date.UTC(
@@ -556,7 +578,7 @@
             const storageKey = (topic, date) =>
                 `${STORAGE_PREFIX}_${topic}_${date}`;
 
-            /* ====================== UI REFS ====================== */
+            /* DOM references */
             const topicSelect = document.getElementById("topicSelect");
             const loadBtn = document.getElementById("loadBtn");
             const statusEl = document.getElementById("status");
@@ -569,7 +591,14 @@
             const sidebarToggle = document.getElementById("sidebarToggle");
             const sidebarEl = document.getElementById("sidebar");
 
-            /* ====================== POPULATE TOPIC SELECT ====================== */
+            /* Register service worker (ignored for now) */
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker
+                    .register("sw.js")
+                    .catch((e) => console.warn("SW registration failed:", e));
+            }
+
+            /* Populate topic dropdown */
             Object.keys(TOPIC_MAP).forEach((t) => {
                 const opt = document.createElement("option");
                 opt.value = t;
@@ -577,14 +606,7 @@
                 topicSelect.appendChild(opt);
             });
 
-            /* ====================== SERVICE WORKER ====================== */
-            if ("serviceWorker" in navigator) {
-                navigator.serviceWorker
-                    .register("sw.js")
-                    .catch((e) => console.warn("SW registration failed:", e));
-            }
-
-            /* ====================== FETCH LOGIC ====================== */
+            /* Fetch top posts from a subreddit */
             async function fetchSubreddit(sub) {
                 const url = `https://www.reddit.com/r/${sub}/top/.json?t=day&limit=${MAX_PER_SUB}`;
                 const resp = await fetch(url);
@@ -592,12 +614,16 @@
                 const data = await resp.json();
                 return data.data.children.map((c) => c.data);
             }
+
+            /* Keep only yesterday’s posts */
             function filterYesterday(posts) {
                 const [start, end] = getYesterdayUTC();
                 return posts.filter(
                     (p) => p.created_utc >= start && p.created_utc <= end
                 );
             }
+
+            /* Load a whole topic (multiple subs) */
             async function loadTopic(topic, forceRefresh = false) {
                 const [start] = getYesterdayUTC();
                 const dateStr = new Date(start * 1000)
@@ -605,6 +631,7 @@
                     .slice(0, 10);
                 const cacheKey = storageKey(topic, dateStr);
                 const cached = localStorage.getItem(cacheKey);
+
                 if (cached && !forceRefresh) {
                     renderPosts(JSON.parse(cached));
                     loadBtn.disabled = false;
@@ -649,12 +676,12 @@
                 }
             }
 
-            /* ====================== STATUS ====================== */
+            /* Show / hide loading spinner */
             function showStatus(show) {
                 statusEl.classList.toggle("hidden", !show);
             }
 
-            /* ====================== RENDERING ====================== */
+            /* Rendering */
             let currentPosts = [];
 
             function renderPosts(posts) {
@@ -662,6 +689,7 @@
                 applyFiltersAndSort();
             }
 
+            /* Apply search + sorting then render */
             function applyFiltersAndSort() {
                 const term = searchInput.value.trim().toLowerCase();
                 const sort = sortSelect.value;
@@ -704,10 +732,10 @@
                     const meta = document.createElement("div");
                     meta.className = "meta";
                     meta.innerHTML = `
-      <span><i class="fa-brands fa-reddit-alien"></i>r/${p.subreddit}</span>
-      <span><i class="fa-solid fa-arrow-up"></i>${p.score}</span>
-      <span><i class="fa-solid fa-comment"></i>${p.comments}</span>
-    `;
+            <span><i class="fa-brands fa-reddit-alien"></i>r/${p.subreddit}</span>
+            <span><i class="fa-solid fa-arrow-up"></i>${p.score}</span>
+            <span><i class="fa-solid fa-comment"></i>${p.comments}</span>
+        `;
 
                     content.append(title, meta);
                     card.append(content);
@@ -721,13 +749,12 @@
                         toggleBookmark(p);
                     });
                     card.append(saveBtn);
-
                     frag.appendChild(card);
                 });
                 postsEl.appendChild(frag);
             }
 
-            /* ====================== BOOKMARKS ====================== */
+            /* Bookmarks handling */
             function getSaved() {
                 const raw = localStorage.getItem(`${STORAGE_PREFIX}_bookmarks`);
                 return raw ? JSON.parse(raw) : [];
@@ -773,28 +800,26 @@
                     const meta = document.createElement("div");
                     meta.className = "meta";
                     meta.innerHTML = `
-      <span><i class="fa-brands fa-reddit-alien"></i>r/${p.subreddit}</span>
-      <span><i class="fa-solid fa-arrow-up"></i>${p.score}</span>
-      <span><i class="fa-solid fa-comment"></i>${p.comments}</span>
-    `;
+            <span><i class="fa-brands fa-reddit-alien"></i>r/${p.subreddit}</span>
+            <span><i class="fa-solid fa-arrow-up"></i>${p.score}</span>
+            <span><i class="fa-solid fa-comment"></i>${p.comments}</span>
+        `;
 
                     content.append(a, meta);
                     card.append(content);
 
                     const delBtn = document.createElement("button");
-                    delBtn.className = "saveBtn";
+                    delBtn.className = "delBtn";
                     delBtn.title = "Remove";
-                    delBtn.innerHTML =
-                        '<i class="fa-solid fa-trash"></i>'; /* same dimensions */
+                    delBtn.textContent = "✕";
                     delBtn.addEventListener("click", () => toggleBookmark(p));
                     card.append(delBtn);
-
                     frag.appendChild(card);
                 });
                 bookmarkList.appendChild(frag);
             }
 
-            /* ====================== EVENT LISTENERS ====================== */
+            /* Event listeners */
             topicSelect.addEventListener("change", () => {
                 const t = topicSelect.value;
                 if (t) {
@@ -815,12 +840,12 @@
                 }
             });
 
+            /* Sidebar toggle – also hides bookmarks */
             sidebarToggle.addEventListener("click", () => {
                 sidebarEl.classList.toggle("collapsed");
                 sidebarToggle.classList.toggle("open");
             });
 
-            /* ====================== INITIAL STATE ====================== */
             renderBookmarks();
         </script>
     </body>
