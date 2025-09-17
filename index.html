@@ -10,7 +10,6 @@
         />
         <link rel="manifest" href="manifest.json" />
 
-        <!-- Font Awesome -->
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -23,435 +22,7 @@
             rel="stylesheet"
         />
 
-        <!-- ---------------------------------------------------------
-         Styles – all CSS lives in this block (see style.css for the
-         same content if you prefer an external sheet)
-         ---------------------------------------------------------- -->
-        <style>
-            /* ---------------------------------------------------------
-           Global variables & resets
-           --------------------------------------------------------- */
-            :root {
-                --bg: #000000;
-                --surface: #111111;
-                --border: #2a2a2a;
-                --accent: #b43131;
-                --text-primary: #e0e0e0;
-                --text-secondary: #777777;
-                --link-visited: #ff5e5e;
-            }
-
-            *,
-            *::before,
-            *::after {
-                box-sizing: border-box;
-            }
-
-            html,
-            body {
-                height: 100%;
-                margin: 0;
-                font-family: "Inter", system-ui, sans-serif;
-                background: var(--bg);
-                color: var(--text-primary);
-                display: flex;
-                flex-direction: column;
-            }
-
-            a {
-                color: var(--accent);
-                text-decoration: none;
-            }
-            a:hover,
-            a:focus {
-                text-decoration: underline;
-            }
-            a:visited {
-                color: var(--link-visited);
-            }
-
-            button,
-            select,
-            input {
-                font: inherit;
-            }
-
-            /* ---------------------------------------------------------
-           Header
-           --------------------------------------------------------- */
-            header {
-                background: var(--accent);
-                color: #fff;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 0.8rem 1.5rem;
-            }
-            header h1 {
-                margin: 0;
-                font-family: "Montserrat", system-ui, sans-serif;
-                font-size: 1.8rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-            header h1 svg {
-                width: 36px;
-                height: 36px;
-            }
-
-            /* Sidebar toggle button */
-            #sidebarToggle {
-                background: var(--bg);
-                color: var(--accent);
-                border: none;
-                border-radius: 6px;
-                width: 38px;
-                height: 38px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-                transition: background 0.2s, color 0.2s;
-            }
-            #sidebarToggle:hover {
-                background: var(--surface);
-            }
-            #sidebarToggle i {
-                transition: transform 0.3s ease;
-            }
-            #sidebarToggle.open i {
-                transform: rotate(90deg);
-            }
-
-            /* ---------------------------------------------------------
-           Layout – wrapper, sidebar, main
-           --------------------------------------------------------- */
-            .wrapper {
-                flex: 1;
-                display: flex;
-                overflow: hidden;
-            }
-
-            /* Sidebar */
-            .sidebar {
-                width: 340px;
-                max-width: 100%;
-                background: var(--bg);
-                border-right: 1px solid var(--border);
-                overflow-y: auto;
-                flex-shrink: 0;
-                display: flex;
-                flex-direction: column;
-                transition: width 0.35s ease, opacity 0.35s ease,
-                    visibility 0.35s;
-                visibility: visible;
-                opacity: 1;
-            }
-            .sidebar.collapsed {
-                width: 0;
-                visibility: hidden;
-                opacity: 0;
-            }
-            .sidebar.collapsed #bookmarks {
-                visibility: hidden;
-                opacity: 0;
-            }
-
-            /* Main content area */
-            .main {
-                flex: 1;
-                background: var(--bg);
-                overflow: auto;
-                display: flex;
-                flex-direction: column;
-            }
-
-            /* ---------------------------------------------------------
-           Controls (topic, search, sort, load)
-           --------------------------------------------------------- */
-            .controls {
-                padding: 1rem;
-                display: grid;
-                gap: 0.8rem;
-                grid-template-columns: 1fr;
-            }
-
-            /* 1️⃣ Topic picker – same look as other selects */
-            #topicSelect {
-                background: #000;
-                color: var(--accent);
-                font-family: "Inter", system-ui, sans-serif;
-                border: none;
-                border-radius: 8px;
-                padding: 0.5rem 0.8rem;
-                transition: background 0.2s;
-            }
-            #topicSelect:focus {
-                outline: 2px solid var(--accent);
-            }
-            #topicSelect:hover {
-                background: #1a1a1a;
-            }
-
-            .controls select,
-            .controls input[type="search"] {
-                padding: 0.5rem 0.8rem;
-                border: none;
-                border-radius: 8px;
-                background: #000;
-                color: var(--accent);
-                transition: background 0.2s;
-            }
-            .controls select:focus,
-            .controls input:focus {
-                outline: 2px solid var(--accent);
-            }
-            .controls select:hover,
-            .controls input:hover {
-                background: #1a1a1a;
-            }
-
-            .controls button,
-            #bookmarks button {
-                background: #000;
-                color: var(--accent);
-                border: 2px solid var(--accent);
-                border-radius: 8px;
-                padding: 0.5rem 0.8rem;
-                cursor: pointer;
-                transition: background 0.2s, color 0.2s, transform 0.1s;
-            }
-            .controls button:hover,
-            #bookmarks button:hover {
-                background: var(--accent);
-                color: #000;
-            }
-            .controls button:active,
-            #bookmarks button:active {
-                transform: translateY(2px);
-            }
-            .controls button[disabled] {
-                opacity: 0.5;
-                cursor: not-allowed;
-            }
-
-            /* dropdown options */
-            select option {
-                background: #000;
-                color: var(--accent);
-            }
-
-            /* ---------------------------------------------------------
-           Status (loading spinner)
-           --------------------------------------------------------- */
-            #status {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                font-size: 0.9rem;
-                color: var(--text-secondary);
-                padding: 0 1rem;
-            }
-            #status.hidden {
-                display: none;
-            }
-
-            .spinner {
-                border: 3px solid #444;
-                border-top: 3px solid var(--accent);
-                border-radius: 50%;
-                width: 1rem;
-                height: 1rem;
-                animation: spin 0.8s linear infinite;
-            }
-            @keyframes spin {
-                to {
-                    transform: rotate(360deg);
-                }
-            }
-
-            /* ---------------------------------------------------------
-           Posts list & cards
-           --------------------------------------------------------- */
-            #postsHeading {
-                margin: 1rem;
-                font-size: 1.4rem;
-                color: var(--accent);
-            }
-            #posts {
-                flex: 1;
-                padding: 0 1rem 1rem;
-                display: flex;
-                flex-direction: column;
-                gap: 0.6rem;
-            }
-
-            .post-card {
-                background: var(--surface);
-                border-left: 4px solid var(--accent);
-                border-radius: 8px;
-                padding: 0.8rem;
-                display: flex;
-                align-items: center;
-                gap: 0.8rem;
-                transition: background 0.2s;
-            }
-            .post-card:hover {
-                background: #1a1a1a;
-            }
-
-            .main .post-card {
-                max-width: 800px;
-                margin: 0 auto;
-                width: 100%;
-            }
-            .sidebar-content .post-card {
-                margin: 0 0.5rem;
-            }
-
-            .post-content {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                gap: 0.3rem;
-            }
-            .post-content a.title {
-                font-weight: 500;
-                color: var(--accent);
-            }
-
-            .meta {
-                font-size: 0.85rem;
-                color: var(--text-secondary);
-                display: flex;
-                flex-wrap: wrap;
-                gap: 0.8rem;
-                align-items: center;
-            }
-            .meta i {
-                margin-right: 0.2rem;
-            }
-
-            /* Save / delete buttons */
-            .saveBtn,
-            .delBtn {
-                border-radius: 8px;
-                cursor: pointer;
-                font-size: 1.1rem;
-                transition: background 0.2s, color 0.2s, transform 0.1s;
-            }
-
-            .saveBtn {
-                background: #000;
-                color: var(--accent);
-                border: 2px solid var(--accent);
-                padding: 0.2rem 0.6rem;
-            }
-            /* 5️⃣ Highlight when already bookmarked */
-            .saveBtn.saved {
-                background: var(--accent);
-                color: #fff;
-            }
-
-            .saveBtn:hover {
-                background: var(--accent);
-                color: #000;
-            }
-            .saveBtn:active,
-            .delBtn:active {
-                transform: translateY(2px);
-            }
-
-            .delBtn {
-                background: var(--surface);
-                color: var(--text-secondary);
-                border: none;
-                padding: 0.2rem 0.6rem;
-            }
-            .delBtn:hover {
-                background: var(--border);
-            }
-
-            /* ---------------------------------------------------------
-           Bookmarks section
-           --------------------------------------------------------- */
-            #bookmarks {
-                padding: 0 1rem 1rem;
-                /* 2️⃣ identical transition to sidebar collapse */
-                transition: width 0.35s ease, opacity 0.35s ease,
-                    visibility 0.35s ease;
-            }
-            #bookmarks h2 {
-                margin: 0.5rem 0.5rem;
-                font-size: 1.2rem;
-                color: var(--accent);
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-            }
-            #bookmarks button {
-                margin-left: auto;
-            }
-
-            /* 3️⃣ gap between saved‑post cards (desktop & mobile) */
-            #bookmarkList {
-                display: flex;
-                flex-direction: column;
-                gap: 0.6rem;
-            }
-
-            /* ---------------------------------------------------------
-           Footer
-           --------------------------------------------------------- */
-            footer {
-                background: var(--bg);
-                color: var(--text-secondary);
-                text-align: center;
-                padding: 0.8rem 1rem;
-                font-size: 0.9rem;
-                border-top: 1px solid var(--border);
-            }
-
-            /* ---------------------------------------------------------
-           Responsive tweaks
-           --------------------------------------------------------- */
-            @media (max-width: 720px) {
-                .wrapper {
-                    flex-direction: column;
-                }
-                .sidebar {
-                    width: 100%;
-                    max-height: 400px;
-                    margin-bottom: 1rem;
-                    border-bottom: 1px solid var(--border);
-                    transition: max-height 0.35s ease, opacity 0.35s,
-                        visibility 0.35s;
-                }
-                .sidebar.collapsed {
-                    max-height: 0;
-                    visibility: hidden;
-                    opacity: 0;
-                }
-                .main .post-card {
-                    max-width: 100%;
-                    margin: 0;
-                }
-            }
-            @media (max-width: 440px) {
-                .sidebar {
-                    display: none;
-                }
-            }
-            .sidebar hr {
-                width: 90%;
-                margin: 1rem auto;
-                border: none;
-                border-top: 1px solid var(--border);
-            }
-        </style>
+        <link rel="stylesheet" href="style.css" />
     </head>
     <body>
         <header>
@@ -520,7 +91,9 @@
 
             <!-- Main content -->
             <main class="main main-content" aria-label="Content">
-                <h2 id="postsHeading">Yesterday’s Top Posts</h2>
+                <h2 id="postsHeading">
+                    Yesterday’s Top Posts <span id="dateSpan"></span>
+                </h2>
 
                 <div id="status" class="hidden" aria-live="polite">
                     <div class="spinner"></div>
@@ -533,25 +106,10 @@
                     aria-label="Reddit posts"
                 ></section>
 
-                <footer>
-                    Made with ❤️ by
-                    <a
-                        href="https://github.com/yourname"
-                        target="_blank"
-                        rel="noopener"
-                        style="color: var(--accent); text-decoration: none"
-                    >
-                        Your Name
-                    </a>
-                    – © 2024
-                </footer>
+                <footer>Made with some help from GPT OSS</footer>
             </main>
         </div>
 
-        <!-- ---------------------------------------------------------
-         JavaScript – all the logic lives in this block (or you
-         can move it to app.js if you prefer an external file)
-         ---------------------------------------------------------- -->
         <script>
             /* ------------------------------ Config ------------------------------ */
             const TOPIC_MAP = {
@@ -648,6 +206,7 @@
             const bookmarkList = document.getElementById("bookmarkList");
             const sidebarToggle = document.getElementById("sidebarToggle");
             const sidebarEl = document.getElementById("sidebar");
+            const dateSpan = document.getElementById("dateSpan");
 
             /* ----------------------- Service Worker ----------------------- */
             if ("serviceWorker" in navigator) {
@@ -664,7 +223,7 @@
                 topicSelect.appendChild(opt);
             });
 
-            /* 4️⃣ Auto‑select first topic */
+            /* Auto‑select first topic */
             if (topicSelect.options.length) {
                 topicSelect.selectedIndex = 0;
                 loadTopic(topicSelect.value);
@@ -755,7 +314,7 @@
                 const term = searchInput.value.trim().toLowerCase();
                 const sort = sortSelect.value;
 
-                const saved = getSaved(); // used for bookmark‑icon state
+                const saved = getSaved();
 
                 let filtered = currentPosts.filter((p) =>
                     p.title.toLowerCase().includes(term)
@@ -809,7 +368,7 @@
                     saveBtn.innerHTML = '<i class="fa-solid fa-bookmark"></i>';
 
                     if (saved.some((s) => s.url === p.url)) {
-                        saveBtn.classList.add("saved"); // 5️⃣ bookmarked visual state
+                        saveBtn.classList.add("saved");
                     }
 
                     saveBtn.addEventListener("click", (e) => {
@@ -911,14 +470,26 @@
                 }
             });
 
-            /* 2️⃣ Sidebar toggle – controls and bookmarks animate together */
             sidebarToggle.addEventListener("click", () => {
                 sidebarEl.classList.toggle("collapsed");
                 sidebarToggle.classList.toggle("open");
             });
 
-            /* initial bookmark render */
+            function updateHeading() {
+                const [start] = getYesterdayUTC();
+                const d = new Date(start * 1000);
+                const formatted = d.toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                });
+                dateSpan.textContent = ` – ${formatted}`;
+            }
+
+            /* --------------------------- Init --------------------------- */
             renderBookmarks();
+            loadBtn.click();
+            updateHeading();
         </script>
     </body>
 </html>
