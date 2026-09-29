@@ -2,6 +2,8 @@
 
 **A lightweight web app that shows the best Reddit posts from yesterday for a chosen topic.**
 
+> **⚠️ Obsolete.** Reddit no longer serves the public `/r/<sub>/top/.json` endpoints to unauthenticated browser requests, so the fetches in `index.html` (and the service worker in `sw.js`) now fail. This app is kept for reference only — reviving it would require an authenticated API client (OAuth) and a small proxy/backend, which breaks the "vanilla JS, no backend" premise.
+
 ## Features
 
 - **Topic groups** – pre‑defined collections of subreddits (Web Design, Programming, Self‑Hosting, AI, Desktop & Phone Customisation).
